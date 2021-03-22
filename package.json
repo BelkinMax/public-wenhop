@@ -1,5 +1,5 @@
 {
-  "name": "PROJECT__wenhop-heroku",
+  "name": "wenhop-heroku",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,8 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "test": "jest"
+    "test": "jest",
+    "heroku-deploy": "git push heroku master"
   },
   "dependencies": {
     "@nuxt/content": "^1.9.0",
