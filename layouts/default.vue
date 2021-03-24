@@ -20,8 +20,6 @@
 </template>
 
 <script>
-// import { mapMutations, mapGetters } from "vuex";
-
 export default {
   data() {
     return {
@@ -30,59 +28,12 @@ export default {
         message:
           "We use cookies on this website because it helps us to provide you a better experience.",
         timeout: 60000
-      },
-      drawer: false,
-      items: [
-        {
-          icon: "mdi-rocket-launch",
-          title: "Upcoming",
-          to: "/"
-        },
-        {
-          icon: "mdi-calendar-month",
-          title: "Calendar",
-          to: "/"
-        },
-        {
-          icon: "mdi-view-dashboard",
-          title: "Dashboard",
-          to: "/dashboard"
-        },
-        {
-          icon: "mdi-wikipedia",
-          title: "Wiki",
-          to: "/wiki"
-        },
-        {
-          icon: "mdi-information",
-          title: "About",
-          to: "/"
-        }
-      ]
+      }
     };
   },
   mounted() {
     if (!localStorage.wasShown) {
       this.cookie.wasShown = false;
-    }
-  },
-  methods: {
-    ...mapMutations("autoupdates", ["SET_AUTO_UPDATE"]),
-
-    toggleAutoUpdate() {
-      this.SET_AUTO_UPDATE(this.modelAutoUpdate);
-    },
-
-    disableCookieMsg() {
-      this.cookie.wasShown = true;
-      localStorage.wasShown = true;
-    }
-  },
-  computed: {
-    ...mapGetters("autoupdates", ["autoUpdate"]),
-
-    isLoading() {
-      return Object.values(this.$store.state).some(state => state.isLoading);
     }
   }
 };

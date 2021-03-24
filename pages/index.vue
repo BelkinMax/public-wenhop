@@ -25,6 +25,8 @@
                 :launch="nextLaunch"
               />
             </v-row>
+
+            <!--s-- Desktop cards -->
             <v-row v-if="!$vuetify.breakpoint.mobile" style="padding: 1rem">
               <v-col class="col-3">
                 <RocketCard v-if="rocket.id" :rocket="rocket" />
@@ -42,10 +44,13 @@
                 <WeatherCard v-if="weather.time" :weather="weather" />
               </v-col>
             </v-row>
+            <!--e-- Desktop cards -->
           </div>
         </template>
       </v-img>
     </v-row>
+
+    <!--s-- Mobile cards -->
     <v-row v-if="$vuetify.breakpoint.mobile">
       <v-col class="col-12">
         <RocketCard v-if="rocket.id" :rocket="rocket" />
@@ -60,6 +65,7 @@
         <WeatherCard v-if="weather.time" :weather="weather" />
       </v-col>
     </v-row>
+    <!--e-- Mobile cards -->
   </section>
 </template>
 
