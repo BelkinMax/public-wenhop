@@ -41,6 +41,11 @@ export default {
       this.cookie.wasShown = true;
       localStorage.wasShown = true;
     }
+  },
+  computed: {
+    isLoading() {
+      return Object.values(this.$store.state).some(state => state.isLoading);
+    }
   }
 };
 </script>
