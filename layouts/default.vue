@@ -1,9 +1,11 @@
 <template>
   <v-app dark>
+    <!--s-- Desktop nav -->
     <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
+      v-if="!$vuetify.breakpoint.mobile"
+      permanent
+      expand-on-hover
+      floating
       fixed
       app
     >
@@ -12,6 +14,7 @@
           v-for="(item, i) in items"
           :key="i"
           :to="item.to"
+          dense
           router
           exact
         >
@@ -23,95 +26,132 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+
+      <!-- <template #append>
+        <v-list>
+          <v-list-item dense>
+            <v-list-item-action>
+              <v-checkbox
+                v-if="!isLoading"
+                v-model="modelAutoUpdate"
+                color="success"
+                @change="toggleAutoUpdate"
+              ></v-checkbox>
+              <v-progress-circular
+                v-if="isLoading"
+                indeterminate
+                color="warning"
+              ></v-progress-circular>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Auto update'" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </template> -->
     </v-navigation-drawer>
-    <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-      <v-btn
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
-    </v-app-bar>
+    <!--e-- Desktop nav -->
+
     <v-main>
-      <v-container>
-        <nuxt />
+      <v-container fluid>
+        <Nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer
-      :absolute="!fixed"
-      app
-    >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
+
+    <!--s-- Mobile nav -->
+    <v-bottom-navigation v-if="$vuetify.breakpoint.mobile" app fixed>
+      <v-btn
+        v-for="(item, i) in items"
+        :key="i"
+        :disabled="item.disabled"
+        :to="item.to"
+        style="height: auto; width: 100%;"
+      >
+        <span>{{ item.title }}</span>
+
+        <v-icon>{{ item.icon }}</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
+    <!--e-- Mobile nav -->
+
+    <!--s-- Cookies popup -->
+    <v-snackbar v-model="!cookie.wasShown" :timeout="cookie.timeout" light>
+      <template v-slot:action="{ attrs }">
+        {{ cookie.message }}
+        <v-btn color="blue" text v-bind="attrs" @click="disableCookieMsg()">
+          Fine
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <!--e-- Cookies popup -->
   </v-app>
 </template>
 
 <script>
+// import { mapMutations, mapGetters } from "vuex";
+
 export default {
-  data () {
+  data() {
     return {
-      clipped: false,
+      cookie: {
+        wasShown: true,
+        message:
+          "We use cookies on this website because it helps us to provide you a better experience.",
+        timeout: 60000
+      },
       drawer: false,
-      fixed: false,
       items: [
         {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
+          icon: "mdi-rocket-launch",
+          title: "Upcoming",
+          to: "/"
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+          icon: "mdi-calendar-month",
+          title: "Calendar",
+          to: "/"
+        },
+        // {
+        //   icon: "mdi-view-dashboard",
+        //   title: "Dashboard",
+        //   to: "/dashboard",
+        // },
+        // {
+        //   icon: "mdi-wikipedia",
+        //   title: "Wiki",
+        //   to: "/wiki",
+        // },
+        {
+          icon: "mdi-information",
+          title: "About",
+          to: "/"
         }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
+      ]
+    };
+  },
+  mounted() {
+    if (!localStorage.wasShown) {
+      this.cookie.wasShown = false;
     }
   }
-}
+  // methods: {
+  //   ...mapMutations("autoupdates", ["SET_AUTO_UPDATE"]),
+
+  //   toggleAutoUpdate() {
+  //     this.SET_AUTO_UPDATE(this.modelAutoUpdate);
+  //   },
+
+  //   disableCookieMsg() {
+  //     this.cookie.wasShown = true;
+  //     localStorage.wasShown = true;
+  //   }
+  // },
+  // computed: {
+  //   ...mapGetters("autoupdates", ["autoUpdate"]),
+
+  //   isLoading() {
+  //     return Object.values(this.$store.state).some(state => state.isLoading);
+  //   }
+  // }
+};
 </script>
