@@ -27,19 +27,27 @@
             <!--s-- Desktop cards -->
             <v-row v-if="!$vuetify.breakpoint.mobile" style="padding: 1rem">
               <v-col class="col-3">
-                <RocketCard v-if="rocket.id" :rocket="rocket" />
+                <base-card :loading="rocket.id ? false : true">
+                  <RocketCard v-if="rocket.id" :rocket="rocket" />
+                </base-card>
               </v-col>
               <v-col class="col-3">
-                <PayloadCard
-                  v-if="payloadsList.length"
-                  :payloadsList="payloadsList"
-                />
+                <base-card :loading="payloadsList.length ? false : true">
+                  <PayloadCard
+                    v-if="payloadsList.length"
+                    :payloadsList="payloadsList"
+                  />
+                </base-card>
               </v-col>
               <v-col class="col-3">
-                <LaunchpadCard v-if="launchpad.id" :launchpad="launchpad" />
+                <base-card :loading="launchpad.id ? false : true">
+                  <LaunchpadCard v-if="launchpad.id" :launchpad="launchpad" />
+                </base-card>
               </v-col>
               <v-col class="col-3">
-                <WeatherCard v-if="weather.time" :weather="weather" />
+                <base-card :loading="weather.time ? false : true">
+                  <WeatherCard v-if="weather.time" :weather="weather"
+                /></base-card>
               </v-col>
             </v-row>
             <!--e-- Desktop cards -->
@@ -51,16 +59,27 @@
     <!--s-- Mobile cards -->
     <v-row v-if="$vuetify.breakpoint.mobile">
       <v-col class="col-12">
-        <RocketCard v-if="rocket.id" :rocket="rocket" />
+        <base-card :loading="rocket.id ? false : true">
+          <RocketCard v-if="rocket.id" :rocket="rocket" />
+        </base-card>
       </v-col>
       <v-col class="col-12">
-        <PayloadCard v-if="payloadsList.length" :payloadsList="payloadsList" />
+        <base-card :loading="payloadsList.length ? false : true">
+          <PayloadCard
+            v-if="payloadsList.length"
+            :payloadsList="payloadsList"
+          />
+        </base-card>
       </v-col>
       <v-col class="col-12">
-        <LaunchpadCard v-if="launchpad.id" :launchpad="launchpad" />
+        <base-card :loading="launchpad.id ? false : true">
+          <LaunchpadCard v-if="launchpad.id" :launchpad="launchpad" />
+        </base-card>
       </v-col>
       <v-col class="col-12">
-        <WeatherCard v-if="weather.time" :weather="weather" />
+        <base-card :loading="weather.time ? false : true">
+          <WeatherCard v-if="weather.time" :weather="weather"
+        /></base-card>
       </v-col>
     </v-row>
     <!--e-- Mobile cards -->
@@ -70,6 +89,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 
+import BaseCard from "@/components/base/BaseCard.vue";
 import NextLaunchCountdown from "@/components/NextLaunchCountdown.vue";
 import RocketCard from "@/components/RocketCard.vue";
 import PayloadCard from "~/components/PayloadCard.vue";
@@ -78,6 +98,7 @@ import WeatherCard from "~/components/WeatherCard.vue";
 
 export default {
   components: {
+    BaseCard,
     NextLaunchCountdown,
     RocketCard,
     PayloadCard,
@@ -91,15 +112,27 @@ export default {
     };
   },
   head() {
-    return {
-      titleTemplate: `${this.rocket.name}: ${this.nextLaunch.name}`,
-      meta: [
-        {
-          name: "description",
-          content: `🚀 Live information about SpaceX Falcon and Starship rocket launches. See the next launch of ${this.rocket.name} rocket.`
-        }
-      ]
-    };
+    if (this.rocket.name && this.nextLaunch.name) {
+      return {
+        titleTemplate: `${this.rocket.name}: ${this.nextLaunch.name}`,
+        meta: [
+          {
+            name: "description",
+            content: `🚀 Live information about SpaceX Falcon and Starship rocket launches. See the next launch of ${this.rocket.name} rocket.`
+          }
+        ]
+      };
+    } else {
+      return {
+        titleTemplate: `Wenhop Live`,
+        meta: [
+          {
+            name: "description",
+            content: `🚀 Live information about SpaceX Falcon and Starship rocket launches.`
+          }
+        ]
+      };
+    }
   },
   async created() {
     await this.getNextLaunch();

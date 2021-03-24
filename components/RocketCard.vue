@@ -1,9 +1,9 @@
 <template>
-  <v-card class="mx-auto" height="100%">
+  <div>
     <v-card-title>Rocket</v-card-title>
     <v-card-subtitle>{{ rocket.name }}</v-card-subtitle>
 
-    <v-card-text>
+    <v-card-text class="mb-3">
       <v-row>
         <v-col>
           <v-progress-linear :value="rate" height="25">
@@ -30,11 +30,14 @@
         wikipedia
       </v-btn>
     </v-card-actions>
-  </v-card>
+  </div>
 </template>
 
 <script>
+import BaseCard from "@/components/base/BaseCard.vue";
+
 export default {
+  components: { BaseCard },
   props: {
     rocket: {
       type: Object,

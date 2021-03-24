@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" height="100%">
+  <div>
     <v-card-title>{{ launchpad.locality }}</v-card-title>
     <v-card-subtitle>Launch day forecast</v-card-subtitle>
     <v-row>
@@ -42,7 +42,7 @@
         </v-simple-table>
       </v-col>
     </v-row>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -54,14 +54,6 @@ export default {
       type: Object,
       required: true
     }
-  },
-  data() {
-    return {
-      visibility: {
-        values: [9260, 3704, 1000, 0],
-        labels: ["Good", "Moderate", "Poor", "Very poor"]
-      }
-    };
   },
   computed: {
     ...mapGetters("launchpads", ["launchpad"]),
@@ -80,5 +72,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped></style>
