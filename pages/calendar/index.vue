@@ -94,7 +94,12 @@
           </template>
 
           <v-row class="mt-2 mb-2 ml-2 mr-2">
-            <v-col class="col" v-for="(item, idx) in list" :key="idx">
+            <!--s-- Card -->
+            <v-col
+              :class="$vuetify.breakpoint.mobile ? 'col-12' : 'col-3'"
+              v-for="(item, idx) in list"
+              :key="idx"
+            >
               <v-card class="mx-auto" light height="100%">
                 <v-card-title class="headline mb-1">
                   {{ item.name }}
@@ -125,8 +130,11 @@
                 </v-card-text>
 
                 <v-card-actions>
-                  <v-btn color="orange lighten-2" text>
-                    <!-- :href="`/calendar/${item.id}`" -->
+                  <v-btn
+                    :href="`/calendar/${item.id}`"
+                    color="orange lighten-2"
+                    text
+                  >
                     Details
                   </v-btn>
 
@@ -153,6 +161,7 @@
                 </v-expand-transition>
               </v-card>
             </v-col>
+            <!--e-- Card -->
           </v-row>
         </v-list-group>
       </v-list-group>
