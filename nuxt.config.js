@@ -1,27 +1,39 @@
-import colors from 'vuetify/es5/util/colors'
+import colors from "vuetify/es5/util/colors";
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    titleTemplate: '%s - PROJECT__wenhop-heroku',
-    title: 'PROJECT__wenhop-heroku',
+    titleTemplate: "wenhop",
+    title: "wenhop",
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+      { charset: "utf-8" },
+      { name: "author", content: "Maxim Belkin" },
+      {
+        name: "keywords",
+        content:
+          "wenhop, spacex, space, rocket, rocket launch, nasa, starship, falcon"
+      },
+      {
+        name: "description",
+        content:
+          "🚀 Live information about SpaceX Falcon and Starship rocket launches."
+      },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { hid: "description", name: "description", content: "" }
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
+  },
+
+  env: {
+    googleMapsKey: process.env.GOOGLE_MAPS_KEY,
+    weatherKey: process.env.WEATHER_KEY
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: [
-  ],
+  css: [],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [
-  ],
+  plugins: ["~/plugins/google-maps.js"],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -29,17 +41,17 @@ export default {
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
-    '@nuxtjs/vuetify',
+    "@nuxtjs/vuetify"
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
+    "@nuxtjs/axios",
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa',
+    "@nuxtjs/pwa",
     // https://go.nuxtjs.dev/content
-    '@nuxt/content',
+    "@nuxt/content"
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
@@ -50,7 +62,7 @@ export default {
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
+    customVariables: ["~/assets/variables.scss"],
     theme: {
       dark: true,
       themes: {
@@ -68,6 +80,5 @@ export default {
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
-  build: {
-  }
-}
+  build: { transpile: ["google-maps"] }
+};

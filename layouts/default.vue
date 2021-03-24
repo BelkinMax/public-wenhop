@@ -133,19 +133,19 @@ export default {
     if (!localStorage.wasShown) {
       this.cookie.wasShown = false;
     }
+  },
+  methods: {
+    // ...mapMutations("autoupdates", ["SET_AUTO_UPDATE"]),
+
+    // toggleAutoUpdate() {
+    //   this.SET_AUTO_UPDATE(this.modelAutoUpdate);
+    // },
+
+    disableCookieMsg() {
+      this.cookie.wasShown = true;
+      localStorage.wasShown = true;
+    }
   }
-  // methods: {
-  //   ...mapMutations("autoupdates", ["SET_AUTO_UPDATE"]),
-
-  //   toggleAutoUpdate() {
-  //     this.SET_AUTO_UPDATE(this.modelAutoUpdate);
-  //   },
-
-  //   disableCookieMsg() {
-  //     this.cookie.wasShown = true;
-  //     localStorage.wasShown = true;
-  //   }
-  // },
   // computed: {
   //   ...mapGetters("autoupdates", ["autoUpdate"]),
 
