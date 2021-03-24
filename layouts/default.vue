@@ -35,6 +35,12 @@ export default {
     if (!localStorage.wasShown) {
       this.cookie.wasShown = false;
     }
+  },
+  methods: {
+    disableCookieMsg() {
+      this.cookie.wasShown = true;
+      localStorage.wasShown = true;
+    }
   }
 };
 </script>

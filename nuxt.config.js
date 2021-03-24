@@ -54,6 +54,33 @@ export default {
     "@nuxt/content"
   ],
 
+  pwa: {
+    meta: {
+      title: "Wenhop Live",
+      author: "Maxim Belkin"
+    },
+    manifest: {
+      name: "Wenhop Live",
+      short_name: "Wenhop Live",
+      lang: "en",
+      display: "fullscreen",
+      background_color: "#192048",
+      theme_color: "#000",
+      icons: [
+        {
+          src: "/android-chrome-192x192.png",
+          sizes: "192x192",
+          type: "image/png"
+        },
+        {
+          src: "/android-chrome-512x512.png",
+          sizes: "512x512",
+          type: "image/png"
+        }
+      ]
+    }
+  },
+
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {},
 
