@@ -52,6 +52,7 @@
 
 <script>
 import { mapMutations, mapGetters } from "vuex";
+import Utils from "@/helpers/Utils.js";
 
 export default {
   props: {
@@ -99,24 +100,6 @@ export default {
           seconds: ("0" + Math.floor((distance % (1000 * 60)) / 1000)).slice(-2)
         });
       }, 1000);
-    },
-    getMonthName(month) {
-      const names = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-      ];
-
-      return names[month];
     }
   },
   computed: {
@@ -127,7 +110,7 @@ export default {
 
       return {
         day: date.getDate(),
-        month: this.getMonthName(date.getMonth()),
+        month: Utils.getMonthName(date.getMonth()),
         year: date.getFullYear(),
         hours: ("0" + Math.floor(date.getHours())).slice(-2),
         minutes: ("0" + Math.floor(date.getMinutes())).slice(-2)
@@ -142,18 +125,6 @@ h1 {
   font-weight: normal;
   letter-spacing: 0.125rem;
   text-transform: uppercase;
-}
-
-li {
-  font-size: 1.5rem;
-  list-style-type: none;
-  text-transform: uppercase;
-}
-
-li span {
-  display: block;
-  font-size: 7rem;
-  font-weight: 800;
 }
 
 .shadows {

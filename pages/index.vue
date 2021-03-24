@@ -10,9 +10,7 @@
         eager
       >
         <template>
-          <div
-            style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;"
-          >
+          <div class="countdown-container">
             <v-row
               class="ma-0"
               align="center"
@@ -169,3 +167,12 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.countdown-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+</style>
