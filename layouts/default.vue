@@ -1,7 +1,7 @@
 <template>
   <v-app dark>
     <!--s-- Desktop nav -->
-    <v-navigation-drawer
+    <!-- <v-navigation-drawer
       v-if="!$vuetify.breakpoint.mobile"
       permanent
       expand-on-hover
@@ -27,7 +27,7 @@
         </v-list-item>
       </v-list>
 
-      <!-- <template #append>
+      <template #append>
         <v-list>
           <v-list-item dense>
             <v-list-item-action>
@@ -48,8 +48,8 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-      </template> -->
-    </v-navigation-drawer>
+      </template>
+    </v-navigation-drawer> -->
     <!--e-- Desktop nav -->
 
     <v-main>
@@ -59,7 +59,7 @@
     </v-main>
 
     <!--s-- Mobile nav -->
-    <v-bottom-navigation v-if="$vuetify.breakpoint.mobile" app fixed>
+    <!-- <v-bottom-navigation v-if="$vuetify.breakpoint.mobile" app fixed>
       <v-btn
         v-for="(item, i) in items"
         :key="i"
@@ -71,7 +71,7 @@
 
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
-    </v-bottom-navigation>
+    </v-bottom-navigation> -->
     <!--e-- Mobile nav -->
 
     <!--s-- Cookies popup -->

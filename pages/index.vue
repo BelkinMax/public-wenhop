@@ -1,89 +1,165 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
+  <section>
+    <v-row>
+      <v-img
+        :src="imageUrl"
+        :lazy-src="imageUrl"
+        style="object-fit: cover; height: 100vh;"
+        width="auto"
+        gradient="to top right, rgba(100,115,201,.33), rgba(25,32,72,.7)"
+        eager
+      >
+        <template>
+          <div
+            style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;"
+          >
+            <v-row
+              class="ma-0"
+              align="center"
+              justify="center"
+              style="height: inherit;"
             >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
+              <NextLaunchCountdown
+                v-if="rocket.id && nextLaunch.id"
+                :rocket="rocket"
+                :launch="nextLaunch"
+              />
+            </v-row>
+            <v-row v-if="!$vuetify.breakpoint.mobile" style="padding: 1rem">
+              <v-col class="col-3">
+                <RocketCard v-if="rocket.id" :rocket="rocket" />
+              </v-col>
+              <v-col class="col-3">
+                <PayloadCard
+                  v-if="payloadsList.length"
+                  :payloadsList="payloadsList"
+                />
+              </v-col>
+              <v-col class="col-3">
+                <LaunchpadCard v-if="launchpad.id" :launchpad="launchpad" />
+              </v-col>
+              <v-col class="col-3">
+                <WeatherCard v-if="weather.time" :weather="weather" />
+              </v-col>
+            </v-row>
           </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+        </template>
+      </v-img>
+    </v-row>
+    <v-row v-if="$vuetify.breakpoint.mobile">
+      <v-col class="col-12">
+        <RocketCard v-if="rocket.id" :rocket="rocket" />
+      </v-col>
+      <v-col class="col-12">
+        <PayloadCard v-if="payloadsList.length" :payloadsList="payloadsList" />
+      </v-col>
+      <v-col class="col-12">
+        <LaunchpadCard v-if="launchpad.id" :launchpad="launchpad" />
+      </v-col>
+      <v-col class="col-12">
+        <WeatherCard v-if="weather.time" :weather="weather" />
+      </v-col>
+    </v-row>
+  </section>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+import { mapActions, mapGetters } from "vuex";
+
+import NextLaunchCountdown from "@/components/NextLaunchCountdown.vue";
+import RocketCard from "@/components/RocketCard.vue";
+import PayloadCard from "~/components/PayloadCard.vue";
+import LaunchpadCard from "~/components/LaunchpadCard.vue";
+import WeatherCard from "~/components/WeatherCard.vue";
 
 export default {
   components: {
-    Logo,
-    VuetifyLogo
+    NextLaunchCountdown,
+    RocketCard,
+    PayloadCard,
+    LaunchpadCard,
+    WeatherCard
+  },
+  data() {
+    return {
+      imageUrl: "#",
+      payloadsList: []
+    };
+  },
+  head() {
+    return {
+      titleTemplate: `${this.rocket.name}: ${this.nextLaunch.name}`,
+      meta: [
+        {
+          name: "description",
+          content: `🚀 Live information about SpaceX Falcon and Starship rocket launches. See the next launch of ${this.rocket.name} rocket.`
+        }
+      ]
+    };
+  },
+  async created() {
+    await this.getNextLaunch();
+    await this.getLaunchRocket();
+    this.getRandomImage();
+    await this.getLaunchPayload();
+    await this.getLaunchLaunchpad();
+    await this.getLaunchpadWeather();
+  },
+  methods: {
+    ...mapActions("rockets", ["getRocket"]),
+    ...mapActions("launches", ["getNextLaunch"]),
+    ...mapActions("payloads", ["getPayload"]),
+    ...mapActions("launchpads", ["getLaunchpad"]),
+    ...mapActions("weather", ["getWeather"]),
+
+    async getLaunchRocket() {
+      if (this.nextLaunch.id) {
+        await this.getRocket(this.nextLaunch.rocket);
+      }
+    },
+
+    async getLaunchPayload() {
+      if (this.nextLaunch.id) {
+        for (const item of this.nextLaunch.payloads) {
+          await this.getPayload(item);
+          this.payloadsList.push(this.payload);
+        }
+      }
+    },
+
+    async getLaunchLaunchpad() {
+      if (this.nextLaunch.id) {
+        await this.getLaunchpad(this.nextLaunch.launchpad);
+      }
+    },
+
+    async getLaunchpadWeather() {
+      if (this.launchpad.id) {
+        await this.getWeather({
+          lat: this.launchpad.latitude,
+          lon: this.launchpad.longitude,
+          date: this.nextLaunch.date_local
+        });
+      }
+    },
+
+    getRandomImage() {
+      if (this.rocket.flickr_images.length) {
+        const image = this.rocket.flickr_images[
+          Math.floor(Math.random() * this.rocket.flickr_images.length)
+        ];
+
+        this.imageUrl = image;
+      }
+    }
+  },
+  computed: {
+    ...mapGetters("rockets", ["rocket"]),
+    ...mapGetters("launches", ["nextLaunch"]),
+    ...mapGetters("payloads", ["payload"]),
+    ...mapGetters("launchpads", ["launchpad"]),
+    ...mapGetters("weather", ["weather"]),
+    ...mapGetters("autoupdates", ["autoUpdate"])
   }
-}
+};
 </script>
