@@ -24,7 +24,7 @@
               dot
               overlap
               bottom
-              color="green"
+              color="red"
             >
               <v-icon>
                 {{ item.icon }}
@@ -78,7 +78,20 @@
       >
         <span>{{ item.title }}</span>
 
-        <v-icon>{{ item.icon }}</v-icon>
+        <v-badge
+          v-if="nextLaunchCountdown.seconds === null && item.badge"
+          dot
+          overlap
+          bottom
+          color="red"
+        >
+          <v-icon>
+            {{ item.icon }}
+          </v-icon>
+        </v-badge>
+        <v-icon v-else>
+          {{ item.icon }}
+        </v-icon>
       </v-btn>
     </v-bottom-navigation>
     <!--e-- Mobile nav -->
