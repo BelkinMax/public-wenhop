@@ -74,7 +74,7 @@
             v-for="launch in filteredLaunches"
             :key="launch.id"
             small
-            color="green"
+            :color="getEventColor(launch)"
             text-color="white"
             class="ma-2"
             @click="focusDate(launch)"
@@ -157,25 +157,7 @@ export default {
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
-      colors: [
-        "blue",
-        "indigo",
-        "deep-purple",
-        "cyan",
-        "green",
-        "orange",
-        "grey darken-1"
-      ],
-      names: [
-        "Meeting",
-        "Holiday",
-        "PTO",
-        "Travel",
-        "Event",
-        "Birthday",
-        "Conference",
-        "Party"
-      ]
+      colors: { s: "green", f: "orange", u: "grey darken-1" }
     };
   },
   async created() {
@@ -305,8 +287,14 @@ export default {
 
       this.events = events;
     },
-    getEventColor(event) {
-      return event.color;
+    getEventColor(launch) {
+      if (launch.success === true) {
+        return this.colors.s;
+      } else if (launch.success === false) {
+        return this.colors.f;
+      } else {
+        return this.colors.u;
+      }
     },
     rnd(a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a;
