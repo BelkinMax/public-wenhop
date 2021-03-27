@@ -16,9 +16,9 @@
         <div
           v-if="nextLaunchCountdown.seconds !== null"
           id="countdown"
-          class="shadows"
+          class="shadows mt-5"
         >
-          <v-row class="mt-5">
+          <v-row>
             <v-col
               class="col-6 col-md-3 text-md-subtitle-1 text-caption d-flex flex-column justify-center align-center"
             >
@@ -44,6 +44,22 @@
               >Seconds
             </v-col>
           </v-row>
+        </div>
+        <div v-else class="mt-5">
+          <v-btn
+            class="mx-2"
+            fab
+            dark
+            large
+            color="red"
+            :href="launch.links.webcast"
+            target="_blank"
+            :disabled="!launch.links.webcast"
+          >
+            <v-icon dark>
+              mdi-youtube
+            </v-icon>
+          </v-btn>
         </div>
       </v-col>
     </v-row>
