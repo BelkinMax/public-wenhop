@@ -19,7 +19,20 @@
           exact
         >
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-badge
+              v-if="nextLaunchCountdown.seconds === null && item.badge"
+              dot
+              overlap
+              bottom
+              color="green"
+            >
+              <v-icon>
+                {{ item.icon }}
+              </v-icon>
+            </v-badge>
+            <v-icon v-else>
+              {{ item.icon }}
+            </v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title v-text="item.title" />
@@ -36,7 +49,9 @@
                 v-model="modelAutoUpdate"
                 color="success"
                 @change="toggleAutoUpdate"
-              ></v-checkbox>
+              >
+                ></v-checkbox
+              >
               <v-progress-circular
                 v-if="isLoading"
                 indeterminate
@@ -103,21 +118,25 @@ export default {
       items: [
         {
           icon: "mdi-rocket-launch",
+          badge: true,
           title: "Upcoming",
           to: "/"
         },
         {
           icon: "mdi-calendar-month",
+          badge: false,
           title: "Calendar",
           to: "/calendar"
         },
         {
           icon: "mdi-wikipedia",
+          badge: false,
           title: "Wiki",
           to: "/wiki"
         },
         {
           icon: "mdi-information",
+          badge: false,
           title: "About",
           to: "/about"
         }
@@ -146,6 +165,7 @@ export default {
   },
   computed: {
     ...mapGetters("autoupdates", ["autoUpdate"]),
+    ...mapGetters("launches", ["nextLaunchCountdown"]),
 
     isLoading() {
       return Object.values(this.$store.state).some(state => state.isLoading);
