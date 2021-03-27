@@ -98,23 +98,21 @@
       >
         <v-card class="mx-auto" light height="100%">
           <v-card-title class="headline mb-1">
-            <!-- {{ item.name }} -->
-            Name
+            {{ selectedEvent.name }}
           </v-card-title>
 
           <v-divider></v-divider>
 
-          <v-card-text>
-            <!-- {{ item.details }} -->
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque ut
-            ipsam expedita illo modi, doloremque sint deleniti nam eos
-            voluptatibus officia voluptate distinctio! Molestias eum impedit
-            esse ratione totam aperiam placeat cumque? Soluta, in quod.
+          <v-card-text v-if="selectedEvent.description">
+            {{ selectedEvent.description }}
           </v-card-text>
 
           <v-card-actions>
-            <v-btn color="orange lighten-2" text>
-              <!-- :href="`/calendar/${item.id}`" -->
+            <v-btn
+              :href="`/calendar/${selectedEvent.id}`"
+              color="orange lighten-2"
+              text
+            >
               Details
             </v-btn>
           </v-card-actions>
@@ -277,11 +275,13 @@ export default {
 
       this.filteredLaunches.map(el => {
         events.push({
+          id: el.id,
           name: el.name,
           start: el.date_local.split("T")[0],
           end: el.date_local.split("T")[0],
           color: this.getEventColor(el),
-          timed: false
+          timed: false,
+          description: el.details || ""
         });
       });
 
