@@ -138,12 +138,11 @@
 
           <v-card-actions>
             <v-btn
-              :href="`/calendar/${selectedEvent.id}`"
               color="orange lighten-2"
               text
-              disabled
+              @click="selectedOpen = false"
             >
-              Details
+              Close
             </v-btn>
           </v-card-actions>
         </v-card>
