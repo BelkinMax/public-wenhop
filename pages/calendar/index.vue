@@ -38,7 +38,7 @@
             label="Rocket"
           ></v-select>
         </v-col>
-        <v-col>
+        <!-- <v-col>
           <v-select
             v-model="filters.payload"
             :items="select.payloads"
@@ -58,7 +58,7 @@
             hide-details
             label="Status"
             class="ma-2"
-          ></v-select>
+          ></v-select> -->
         </v-col>
       </v-row>
     </v-sheet>
@@ -261,7 +261,11 @@ export default {
         }
 
         // set rockets
-        if (rockets.indexOf(rocketObj.name) === -1) {
+        if (
+          (date[0] === year.toString(10) || year === all) &&
+          (Utils.getMonthName(+date[1] - 1) === month || month === all) &&
+          rockets.indexOf(rocketObj.name) === -1
+        ) {
           rockets.push(rocketObj.name);
         }
 
