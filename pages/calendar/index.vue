@@ -111,18 +111,23 @@
         :activator="selectedElement"
         offset-x
       >
-        <v-card class="mx-auto" light height="100%">
+        <v-card elevation="2" class="mx-auto" light height="100%">
           <v-card-title class="headline mb-1">
             {{ selectedEvent.name }}
-            <v-spacer></v-spacer>
+          </v-card-title>
+
+          <v-card-subtitle>
             <v-chip
-              class="ml-4"
               :color="selectedEvent.color"
               text-color="white"
               small
               >{{ selectedEvent.status }}</v-chip
             >
-          </v-card-title>
+            <v-chip
+              small
+              >{{ selectedEvent.rocket }}</v-chip
+            >
+          </v-card-subtitle>
 
           <v-divider></v-divider>
 
@@ -323,6 +328,8 @@ export default {
       const events = [];
 
       this.filteredLaunches.map(el => {
+        const rocketObj = this.rockets.find(item => el.rocket === item.id);
+
         events.push({
           id: el.id,
           name: el.name,
@@ -331,6 +338,7 @@ export default {
           color: this.getEventColor(el)[0],
           timed: false,
           status: this.getEventColor(el)[1],
+          rocket: rocketObj.name,
           description: el.details || ""
         });
       });
