@@ -73,7 +73,7 @@
           v-for="launch in filteredLaunches"
           :key="launch.id"
           small
-          :color="getEventColor(launch)"
+          :color="getEventColor(launch)[0]"
           text-color="white"
           @click="focusDate(launch)"
         >
@@ -99,6 +99,14 @@
         <v-card class="mx-auto" light height="100%">
           <v-card-title class="headline mb-1">
             {{ selectedEvent.name }}
+            <v-spacer></v-spacer>
+            <v-chip
+              class="ml-4"
+              :color="selectedEvent.color"
+              text-color="white"
+              small
+              >{{ selectedEvent.status }}</v-chip
+            >
           </v-card-title>
 
           <v-divider></v-divider>
@@ -112,6 +120,7 @@
               :href="`/calendar/${selectedEvent.id}`"
               color="orange lighten-2"
               text
+              disabled
             >
               Details
             </v-btn>
@@ -279,8 +288,9 @@ export default {
           name: el.name,
           start: el.date_local.split("T")[0],
           end: el.date_local.split("T")[0],
-          color: this.getEventColor(el),
+          color: this.getEventColor(el)[0],
           timed: false,
+          status: this.getEventColor(el)[1],
           description: el.details || ""
         });
       });
@@ -290,11 +300,11 @@ export default {
 
     getEventColor(launch) {
       if (launch.success === true) {
-        return this.colors.s;
+        return [this.colors.s, "Success"];
       } else if (launch.success === false) {
-        return this.colors.f;
+        return [this.colors.f, "Failure"];
       } else {
-        return this.colors.u;
+        return [this.colors.u, "Upcoming"];
       }
     }
   },
