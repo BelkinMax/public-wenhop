@@ -77,6 +77,7 @@
             color="green"
             text-color="white"
             class="ma-2"
+            @click="focusDate(launch)"
           >
             {{ launch.name }}
           </v-chip>
@@ -86,6 +87,7 @@
 
     <v-sheet class="mb-4">
       <v-calendar
+        v-model="focus"
         ref="calendar"
         type="month"
         :events="events"
@@ -188,6 +190,8 @@ export default {
     filters: {
       handler(newVal) {
         this.filteredLaunches = [];
+        this.events = [];
+
         if (newVal.year === "All") {
           this.filters.month = "All";
         }
@@ -196,6 +200,7 @@ export default {
 
         this.setFilters(this.filters);
         this.getEvents();
+        this.focusMonth(this.events);
       },
       deep: true
     }
@@ -203,8 +208,17 @@ export default {
   methods: {
     ...mapActions("launches", ["getLaunches"]),
 
-    focusOnMonth(year, month) {
-      this.focus = year + "-" + month;
+    focusMonth(events) {
+      if (events.length) {
+        this.focus = events[0].start;
+      } else {
+        this.focus = "";
+      }
+    },
+
+    focusDate(launch) {
+      const date = launch.date_local.split("T");
+      this.focus = date[0];
     },
 
     setYears() {
@@ -238,8 +252,7 @@ export default {
 
         const filters = [
           year === all ? true : date[0] === year.toString(10),
-          month === all ? true : Utils.getMonthName(+date[1] - 1) === month,
-          rocket === all ? true : Utils.getMonthName(+date[1] - 1) === month
+          month === all ? true : Utils.getMonthName(+date[1] - 1) === month
         ];
 
         return filters.every(el => el);
@@ -251,12 +264,6 @@ export default {
       months.map(el => this.months.push(Utils.getMonthName(el)));
       if (this.months.indexOf(this.filters.month) === -1) {
         this.filters.month = all;
-      }
-
-      if (month === all) {
-        this.focusOnMonth(year, "01");
-      } else {
-        this.focusOnMonth(year, Utils.getMonthNum(month));
       }
 
       this.filteredLaunches = res;
@@ -289,8 +296,8 @@ export default {
       this.filteredLaunches.map(el => {
         events.push({
           name: el.name,
-          start: el.date_utc.split("T")[0],
-          end: el.date_utc.split("T")[0],
+          start: el.date_local.split("T")[0],
+          end: el.date_local.split("T")[0],
           color: this.colors[this.rnd(0, this.colors.length - 1)],
           timed: false
         });
