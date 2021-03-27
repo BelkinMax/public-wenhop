@@ -6,7 +6,7 @@
           <v-select
             v-model="filters.year"
             ref="year"
-            :items="years"
+            :items="select.years"
             dense
             outlined
             hide-details
@@ -18,7 +18,7 @@
           <v-select
             v-model="filters.month"
             ref="month"
-            :items="months"
+            :items="select.months"
             :disabled="filters.year === 'All'"
             dense
             outlined
@@ -30,7 +30,7 @@
         <v-col>
           <v-select
             v-model="filters.rocket"
-            :items="rockets"
+            :items="select.rockets"
             dense
             outlined
             hide-details
@@ -41,7 +41,7 @@
         <v-col>
           <v-select
             v-model="filters.payload"
-            :items="payloads"
+            :items="select.payloads"
             dense
             outlined
             hide-details
@@ -52,7 +52,7 @@
         <v-col>
           <v-select
             v-model="filters.status"
-            :items="statuses"
+            :items="select.statuses"
             dense
             outlined
             hide-details
@@ -80,6 +80,21 @@
           {{ launch.name }}
         </v-chip>
       </v-chip-group>
+    </v-sheet>
+
+    <v-sheet class="mb-4">
+      <v-card-subtitle v-if="focus">
+        {{
+          `${getMonthName(new Date(focus).getMonth())} ${new Date(
+            focus
+          ).getFullYear()}`
+        }}
+      </v-card-subtitle>
+      <v-card-subtitle v-else>
+        {{
+          `${getMonthName(new Date().getMonth())} ${new Date().getFullYear()}`
+        }}
+      </v-card-subtitle>
     </v-sheet>
 
     <v-sheet class="mb-4">
@@ -140,11 +155,13 @@ export default {
     return {
       filteredLaunches: [],
 
-      months: ["All"],
-      years: ["All"],
-      rockets: ["All", "Falcon 1", "Falcon 9", "Falcon Heavy"],
-      payloads: ["All", "Dragon", "Starlink", "Other"],
-      statuses: ["All", "Success", "Failure", "Upcoming"],
+      select: {
+        months: ["All"],
+        years: ["All"],
+        rockets: ["All"],
+        payloads: ["All", "Dragon", "Starlink", "Other"],
+        statuses: ["All", "Success", "Failure", "Upcoming"]
+      },
 
       focus: "",
 
@@ -168,6 +185,9 @@ export default {
     if (!this.allLaunches.length) {
       await this.getLaunches();
     }
+    if (!this.rockets.length) {
+      await this.getRockets();
+    }
     this.setYears();
     this.setFilters(this.filters);
     this.getEvents();
@@ -182,7 +202,7 @@ export default {
           this.filters.month = "All";
         }
 
-        this.months = ["All"];
+        this.select.months = ["All"];
 
         this.setFilters(this.filters);
         this.getEvents();
@@ -193,6 +213,7 @@ export default {
   },
   methods: {
     ...mapActions("launches", ["getLaunches"]),
+    ...mapActions("rockets", ["getRockets"]),
 
     focusMonth(events) {
       if (events.length) {
@@ -219,15 +240,17 @@ export default {
       });
 
       years = years.sort((a, b) => b - a);
-      this.years = ["All", ...years];
+      this.select.years = ["All", ...years];
     },
 
     setFilters({ year, month, rocket, payload, status }) {
       const all = "All";
       let months = [];
+      let rockets = [];
 
       const res = this.allLaunches.filter(launch => {
         const date = launch.date_local.split("-");
+        const rocketObj = this.rockets.find(el => el.id === launch.rocket);
 
         // set months
         if (
@@ -237,9 +260,15 @@ export default {
           months.push(+date[1] - 1);
         }
 
+        // set rockets
+        if (rockets.indexOf(rocketObj.name) === -1) {
+          rockets.push(rocketObj.name);
+        }
+
         const filters = [
           year === all ? true : date[0] === year.toString(10),
-          month === all ? true : Utils.getMonthName(+date[1] - 1) === month
+          month === all ? true : Utils.getMonthName(+date[1] - 1) === month,
+          rocket === all ? true : rocketObj.name === rocket
         ];
 
         return filters.every(el => el);
@@ -247,10 +276,17 @@ export default {
 
       // sort
       months = months.sort();
-      this.months = ["All"];
-      months.map(el => this.months.push(Utils.getMonthName(el)));
-      if (this.months.indexOf(this.filters.month) === -1) {
+      this.select.months = ["All"];
+      months.map(el => this.select.months.push(Utils.getMonthName(el)));
+      if (this.select.months.indexOf(this.filters.month) === -1) {
         this.filters.month = all;
+      }
+
+      rockets = rockets.sort();
+      this.select.rockets = ["All"];
+      rockets.map(el => this.select.rockets.push(el));
+      if (this.select.rockets.indexOf(this.filters.rocket) === -1) {
+        this.filters.rocket = all;
       }
 
       this.filteredLaunches = res;
@@ -309,7 +345,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("launches", ["allLaunches"])
+    ...mapGetters("launches", ["allLaunches"]),
+    ...mapGetters("rockets", ["rockets"])
   }
 };
 </script>
