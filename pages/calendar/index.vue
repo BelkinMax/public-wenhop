@@ -64,25 +64,22 @@
     </v-sheet>
 
     <v-sheet class="mb-4">
-      <v-row>
-        <v-col>
-          <v-chip small outlined class="ma-2">
-            {{ filteredLaunches.length }} results found:
-          </v-chip>
+      <v-chip-group multiple show-arrows class="pa-2">
+        <v-chip small outlined>
+          {{ filteredLaunches.length }} results found:
+        </v-chip>
 
-          <v-chip
-            v-for="launch in filteredLaunches"
-            :key="launch.id"
-            small
-            :color="getEventColor(launch)"
-            text-color="white"
-            class="ma-2"
-            @click="focusDate(launch)"
-          >
-            {{ launch.name }}
-          </v-chip>
-        </v-col>
-      </v-row>
+        <v-chip
+          v-for="launch in filteredLaunches"
+          :key="launch.id"
+          small
+          :color="getEventColor(launch)"
+          text-color="white"
+          @click="focusDate(launch)"
+        >
+          {{ launch.name }}
+        </v-chip>
+      </v-chip-group>
     </v-sheet>
 
     <v-sheet class="mb-4">
@@ -217,6 +214,7 @@ export default {
       years = years.sort((a, b) => b - a);
       this.years = ["All", ...years];
     },
+
     setFilters({ year, month, rocket, payload, status }) {
       const all = "All";
       let months = [];
@@ -269,9 +267,11 @@ export default {
 
       nativeEvent.stopPropagation();
     },
+
     getMonthName(month) {
       return Utils.getMonthName(month);
     },
+
     getEvents() {
       const events = [];
 
@@ -287,6 +287,7 @@ export default {
 
       this.events = events;
     },
+
     getEventColor(launch) {
       if (launch.success === true) {
         return this.colors.s;
@@ -295,9 +296,6 @@ export default {
       } else {
         return this.colors.u;
       }
-    },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
     }
   },
   computed: {
