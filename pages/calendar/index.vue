@@ -58,8 +58,8 @@
             hide-details
             label="Status"
             class="ma-2"
-          ></v-select> -->
-        </v-col>
+          ></v-select>
+        </v-col> -->
       </v-row>
     </v-sheet>
 
@@ -118,16 +118,10 @@
           </v-card-title>
 
           <v-card-subtitle>
-            <v-chip
-              :color="selectedEvent.color"
-              text-color="white"
-              small
-              >{{ selectedEvent.status }}</v-chip
-            >
-            <v-chip
-              small
-              >{{ selectedEvent.rocket }}</v-chip
-            >
+            <v-chip :color="selectedEvent.color" text-color="white" small>{{
+              selectedEvent.status
+            }}</v-chip>
+            <v-chip small>{{ selectedEvent.rocket }}</v-chip>
           </v-card-subtitle>
 
           <v-divider></v-divider>
@@ -138,10 +132,15 @@
 
           <v-card-actions>
             <v-btn
-              color="orange lighten-2"
-              text
+              color="primary"
+              elevation="2"
               @click="selectedOpen = false"
+              :href="'/calendar/' + selectedEvent.id"
             >
+              Details
+            </v-btn>
+            <v-spacer> </v-spacer>
+            <v-btn text @click="selectedOpen = false">
               Close
             </v-btn>
           </v-card-actions>
