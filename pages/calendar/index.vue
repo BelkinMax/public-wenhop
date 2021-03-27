@@ -280,7 +280,7 @@ export default {
           name: el.name,
           start: el.date_local.split("T")[0],
           end: el.date_local.split("T")[0],
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
+          color: this.getEventColor(el),
           timed: false
         });
       });
