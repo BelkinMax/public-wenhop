@@ -1,305 +1,308 @@
 <template>
   <section>
-    <v-list>
-      <v-list-item>
-        <v-list-item-title class="d-flex justify-center">
-          <v-chip color="green" small light label class="mr-3"> Success</v-chip>
-          <v-chip color="red" small light label class="mr-3"> Failure</v-chip>
-          <v-chip color="white" small light label class="mr-3">
-            Upcoming</v-chip
-          ></v-list-item-title
-        >
-      </v-list-item>
-    </v-list>
-    <v-list v-if="launchesAreLoaded">
-      <v-list-group v-for="year in yearsList" :key="year" v-if="launches[year]">
-        <template v-slot:activator>
-          <v-list-item-title>
-            <v-chip
-              v-if="launchesStatus[year].all.success"
-              color="green"
-              small
-              light
-              label
-              class="mr-3"
-            >
-              {{ launchesStatus[year].all.success }}</v-chip
-            >
-            <v-chip
-              v-if="launchesStatus[year].all.failures"
-              color="red"
-              small
-              light
-              label
-              class="mr-3"
-            >
-              {{ launchesStatus[year].all.failures }}</v-chip
-            >
-            <v-chip
-              v-if="launchesStatus[year].all.upcoming"
-              color="white"
-              small
-              light
-              label
-              class="mr-3"
-            >
-              {{ launchesStatus[year].all.upcoming }}</v-chip
-            >{{ year }}</v-list-item-title
+    <v-sheet tile class="d-flex mb-4">
+      <v-row dense>
+        <v-col>
+          <v-select
+            v-model="filters.year"
+            ref="year"
+            :items="years"
+            dense
+            outlined
+            hide-details
+            class="ma-2"
+            label="Year"
+          ></v-select>
+        </v-col>
+        <v-col>
+          <v-select
+            v-model="filters.month"
+            ref="month"
+            :items="months"
+            :disabled="filters.year === 'All'"
+            dense
+            outlined
+            hide-details
+            class="ma-2"
+            label="Month"
+          ></v-select>
+        </v-col>
+        <v-col>
+          <v-select
+            v-model="filters.rocket"
+            :items="rockets"
+            dense
+            outlined
+            hide-details
+            class="ma-2"
+            label="Rocket"
+          ></v-select>
+        </v-col>
+        <v-col>
+          <v-select
+            v-model="filters.payload"
+            :items="payloads"
+            dense
+            outlined
+            hide-details
+            class="ma-2"
+            label="Payload"
+          ></v-select>
+        </v-col>
+        <v-col>
+          <v-select
+            v-model="filters.status"
+            :items="statuses"
+            dense
+            outlined
+            hide-details
+            label="Status"
+            class="ma-2"
+          ></v-select>
+        </v-col>
+      </v-row>
+    </v-sheet>
+
+    <v-sheet class="mb-4">
+      <v-row>
+        <v-col>
+          <v-chip small outlined class="ma-2">
+            {{ filteredLaunches.length }} results found:
+          </v-chip>
+
+          <v-chip
+            v-for="launch in filteredLaunches"
+            :key="launch.id"
+            small
+            color="green"
+            text-color="white"
+            class="ma-2"
           >
-        </template>
+            {{ launch.name }}
+          </v-chip>
+        </v-col>
+      </v-row>
+    </v-sheet>
 
-        <v-list-group
-          v-for="(list, month) in launches[year]"
-          :key="month"
-          :value="false"
-          no-action
-          sub-group
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-chip
-                  v-if="launchesStatus[year][month].success"
-                  color="green"
-                  small
-                  light
-                  label
-                  class="mr-3"
-                >
-                  {{ launchesStatus[year][month].success }}</v-chip
-                >
-                <v-chip
-                  v-if="launchesStatus[year][month].failures"
-                  color="red"
-                  small
-                  light
-                  label
-                  class="mr-3"
-                >
-                  {{ launchesStatus[year][month].failures }}</v-chip
-                >
-                <v-chip
-                  v-if="launchesStatus[year][month].upcoming"
-                  color="white"
-                  small
-                  light
-                  label
-                  class="mr-3"
-                >
-                  {{ launchesStatus[year][month].upcoming }}</v-chip
-                >
-                {{ monthName(month) }}</v-list-item-title
-              >
-            </v-list-item-content>
-          </template>
+    <v-sheet class="mb-4">
+      <v-calendar
+        ref="calendar"
+        type="month"
+        :events="events"
+        @click:event="showEvent"
+      ></v-calendar>
+      <v-menu
+        v-model="selectedOpen"
+        :close-on-content-click="false"
+        :activator="selectedElement"
+        offset-x
+      >
+        <v-card class="mx-auto" light height="100%">
+          <v-card-title class="headline mb-1">
+            <!-- {{ item.name }} -->
+            Name
+          </v-card-title>
 
-          <v-row class="mt-2 mb-2 ml-2 mr-2">
-            <!--s-- Card -->
-            <v-col
-              :class="$vuetify.breakpoint.mobile ? 'col-12' : 'col-3'"
-              v-for="(item, idx) in list"
-              :key="idx"
-            >
-              <v-card class="mx-auto" light height="100%">
-                <v-card-title class="headline mb-1">
-                  {{ item.name }}
-                </v-card-title>
+          <v-divider></v-divider>
 
-                <v-card-text>
-                  <v-simple-table dense>
-                    <template v-slot:default>
-                      <tbody>
-                        <tr>
-                          <th>Date</th>
-                          <td>
-                            {{ date(item).day }} {{ date(item).month }}
-                            {{ date(item).year }}
-                          </td>
-                        </tr>
-                        <tr v-if="!item.upcoming">
-                          <th>Status</th>
-                          <td>{{ item.success ? "Success" : "Failure" }}</td>
-                        </tr>
-                        <tr v-else>
-                          <th>Status</th>
-                          <td>Upcoming</td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card-text>
+          <v-card-text>
+            <!-- {{ item.details }} -->
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque ut
+            ipsam expedita illo modi, doloremque sint deleniti nam eos
+            voluptatibus officia voluptate distinctio! Molestias eum impedit
+            esse ratione totam aperiam placeat cumque? Soluta, in quod.
+          </v-card-text>
 
-                <v-card-actions>
-                  <v-btn
-                    :href="`/calendar/${item.id}`"
-                    color="orange lighten-2"
-                    text
-                  >
-                    Details
-                  </v-btn>
-
-                  <v-spacer></v-spacer>
-
-                  <v-btn
-                    v-show="!showDetails.some(i => i === item.id)"
-                    icon
-                    @click="openCard(item.id)"
-                  >
-                    <v-icon>{{ "mdi-chevron-down" }}</v-icon>
-                  </v-btn>
-                </v-card-actions>
-
-                <v-divider></v-divider>
-                <v-expand-transition>
-                  <div v-show="showDetails.some(i => i === item.id)">
-                    <v-divider></v-divider>
-
-                    <v-card-text>
-                      {{ item.details }}
-                    </v-card-text>
-                  </div>
-                </v-expand-transition>
-              </v-card>
-            </v-col>
-            <!--e-- Card -->
-          </v-row>
-        </v-list-group>
-      </v-list-group>
-    </v-list>
+          <v-card-actions>
+            <v-btn color="orange lighten-2" text>
+              <!-- :href="`/calendar/${item.id}`" -->
+              Details
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
+    </v-sheet>
   </section>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
 import Utils from "@/helpers/Utils.js";
-// import Launch from "~/models/Launch";
 
 export default {
   data() {
     return {
-      launches: {},
-      launchesStatus: {},
-      yearsList: [],
-      launchesAreLoaded: false,
-      showDetails: []
+      filteredLaunches: [],
+
+      months: ["All"],
+      years: ["All"],
+      rockets: ["All", "Falcon 1", "Falcon 9", "Falcon Heavy"],
+      payloads: ["All", "Dragon", "Starlink", "Other"],
+      statuses: ["All", "Success", "Failure", "Upcoming"],
+
+      focus: "",
+
+      filters: {
+        year: new Date().getFullYear().toString(10),
+        month: Utils.getMonthName(new Date().getMonth()),
+        rocket: "All",
+        payload: "All",
+        status: "All"
+      },
+
+      value: "",
+      events: [],
+      selectedEvent: {},
+      selectedElement: null,
+      selectedOpen: false,
+      colors: [
+        "blue",
+        "indigo",
+        "deep-purple",
+        "cyan",
+        "green",
+        "orange",
+        "grey darken-1"
+      ],
+      names: [
+        "Meeting",
+        "Holiday",
+        "PTO",
+        "Travel",
+        "Event",
+        "Birthday",
+        "Conference",
+        "Party"
+      ]
     };
   },
   async created() {
-    await this.getLaunches();
-    this.setLaunches();
+    if (!this.allLaunches.length) {
+      await this.getLaunches();
+    }
+    this.setYears();
+    this.setFilters(this.filters);
+    this.getEvents();
+  },
+  watch: {
+    filters: {
+      handler(newVal) {
+        this.filteredLaunches = [];
+        if (newVal.year === "All") {
+          this.filters.month = "All";
+        }
+
+        this.months = ["All"];
+
+        this.setFilters(this.filters);
+        this.getEvents();
+      },
+      deep: true
+    }
   },
   methods: {
     ...mapActions("launches", ["getLaunches"]),
 
-    monthName(month) {
-      return Utils.getMonthName(month);
+    focusOnMonth(year, month) {
+      this.focus = year + "-" + month;
     },
 
-    openCard(id) {
-      this.showDetails.push(id);
-    },
+    setYears() {
+      let years = [];
 
-    date(launch) {
-      const date = new Date(launch.date_utc);
-
-      return {
-        day: date.getDate(),
-        month: Utils.getMonthName(date.getMonth()),
-        year: date.getFullYear(),
-        hours: ("0" + Math.floor(date.getHours())).slice(-2),
-        minutes: ("0" + Math.floor(date.getMinutes())).slice(-2)
-      };
-    },
-
-    setLaunches() {
       this.allLaunches.map(launch => {
-        const year = new Date(launch.date_utc).getFullYear();
-        const monthIdx = new Date(launch.date_utc).getMonth();
+        const date = launch.date_local.split("-");
 
-        if (!this.launches[year]) {
-          this.launches[year] = {};
-          this.launchesStatus[year] = {};
-
-          this.launches[year][monthIdx] = [launch];
-
-          if (launch.upcoming) {
-            this.launchesStatus[year][monthIdx] = {
-              success: 0,
-              failures: 0,
-              upcoming: 1
-            };
-            this.launchesStatus[year].all = {
-              success: 0,
-              failures: 0,
-              upcoming: 1
-            };
-          } else if (launch.success) {
-            this.launchesStatus[year][monthIdx] = {
-              success: 1,
-              failures: 0,
-              upcoming: 0
-            };
-            this.launchesStatus[year].all = {
-              success: 1,
-              failures: 0,
-              upcoming: 0
-            };
-          } else {
-            this.launchesStatus[year][monthIdx] = {
-              success: 0,
-              failures: 1,
-              upcoming: 0
-            };
-            this.launchesStatus[year].all = {
-              success: 0,
-              failures: 1,
-              upcoming: 0
-            };
-          }
-
-          this.yearsList.unshift(year);
-        } else if (this.launches[year][monthIdx]) {
-          this.launches[year][monthIdx].push(launch);
-
-          if (launch.upcoming) {
-            this.launchesStatus[year][monthIdx].upcoming++;
-            this.launchesStatus[year].all.upcoming++;
-          } else if (launch.success) {
-            this.launchesStatus[year][monthIdx].success++;
-            this.launchesStatus[year].all.success++;
-          } else {
-            this.launchesStatus[year][monthIdx].failures++;
-            this.launchesStatus[year].all.failures++;
-          }
-        } else {
-          this.launches[year][monthIdx] = [launch];
-
-          if (launch.upcoming) {
-            this.launchesStatus[year][monthIdx] = {
-              success: 0,
-              failures: 0,
-              upcoming: 1
-            };
-            this.launchesStatus[year].all.upcoming++;
-          } else if (launch.success) {
-            this.launchesStatus[year][monthIdx] = {
-              success: 1,
-              failures: 0,
-              upcoming: 0
-            };
-            this.launchesStatus[year].all.success++;
-          } else {
-            this.launchesStatus[year][monthIdx] = {
-              success: 0,
-              failures: 1,
-              upcoming: 0
-            };
-            this.launchesStatus[year].all.failures++;
-          }
+        if (years.indexOf(date[0]) === -1) {
+          years.push(date[0]);
         }
       });
 
-      this.launchesAreLoaded = true;
+      years = years.sort((a, b) => b - a);
+      this.years = ["All", ...years];
+    },
+    setFilters({ year, month, rocket, payload, status }) {
+      const all = "All";
+      let months = [];
+
+      const res = this.allLaunches.filter(launch => {
+        const date = launch.date_local.split("-");
+
+        // set months
+        if (
+          date[0] === year.toString(10) &&
+          months.indexOf(+date[1] - 1) === -1
+        ) {
+          months.push(+date[1] - 1);
+        }
+
+        const filters = [
+          year === all ? true : date[0] === year.toString(10),
+          month === all ? true : Utils.getMonthName(+date[1] - 1) === month,
+          rocket === all ? true : Utils.getMonthName(+date[1] - 1) === month
+        ];
+
+        return filters.every(el => el);
+      });
+
+      // sort
+      months = months.sort();
+      this.months = ["All"];
+      months.map(el => this.months.push(Utils.getMonthName(el)));
+      if (this.months.indexOf(this.filters.month) === -1) {
+        this.filters.month = all;
+      }
+
+      if (month === all) {
+        this.focusOnMonth(year, "01");
+      } else {
+        this.focusOnMonth(year, Utils.getMonthNum(month));
+      }
+
+      this.filteredLaunches = res;
+    },
+
+    showEvent({ nativeEvent, event }) {
+      const open = () => {
+        this.selectedEvent = event;
+        this.selectedElement = nativeEvent.target;
+        setTimeout(() => {
+          this.selectedOpen = true;
+        }, 10);
+      };
+
+      if (this.selectedOpen) {
+        this.selectedOpen = false;
+        setTimeout(open, 10);
+      } else {
+        open();
+      }
+
+      nativeEvent.stopPropagation();
+    },
+    getMonthName(month) {
+      return Utils.getMonthName(month);
+    },
+    getEvents() {
+      const events = [];
+
+      this.filteredLaunches.map(el => {
+        events.push({
+          name: el.name,
+          start: el.date_utc.split("T")[0],
+          end: el.date_utc.split("T")[0],
+          color: this.colors[this.rnd(0, this.colors.length - 1)],
+          timed: false
+        });
+      });
+
+      this.events = events;
+    },
+    getEventColor(event) {
+      return event.color;
+    },
+    rnd(a, b) {
+      return Math.floor((b - a + 1) * Math.random()) + a;
     }
   },
   computed: {
