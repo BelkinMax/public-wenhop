@@ -58,12 +58,12 @@
 
     <!--s-- Mobile cards -->
     <v-row v-if="$vuetify.breakpoint.mobile">
-      <v-col class="col-12">
+      <v-col class="col-12 col-sm-6">
         <base-card :loading="rocket.id ? false : true">
           <RocketCard v-if="rocket.id" :rocket="rocket" />
         </base-card>
       </v-col>
-      <v-col class="col-12">
+      <v-col class="col-12 col-sm-6">
         <base-card :loading="payloadsList.length ? false : true">
           <PayloadCard
             v-if="payloadsList.length"
@@ -71,12 +71,12 @@
           />
         </base-card>
       </v-col>
-      <v-col class="col-12">
+      <v-col class="col-12 col-sm-6">
         <base-card :loading="launchpad.id ? false : true">
           <LaunchpadCard v-if="launchpad.id" :launchpad="launchpad" />
         </base-card>
       </v-col>
-      <v-col class="col-12">
+      <v-col class="col-12 col-sm-6">
         <base-card :loading="weather.time ? false : true">
           <WeatherCard v-if="weather.time" :weather="weather"
         /></base-card>

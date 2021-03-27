@@ -104,6 +104,7 @@
         type="month"
         :events="events"
         @click:event="showEvent"
+        light
       ></v-calendar>
       <v-menu
         v-model="selectedOpen"
