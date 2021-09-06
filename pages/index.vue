@@ -76,7 +76,7 @@
           <LaunchpadCard v-if="launchpad.id" :launchpad="launchpad" />
         </base-card>
       </v-col>
-      <v-col class="col-12 col-sm-6">
+      <v-col v-if="weather.time" class="col-12 col-sm-6">
         <base-card :loading="weather.time ? false : true">
           <WeatherCard v-if="weather.time" :weather="weather"
         /></base-card>

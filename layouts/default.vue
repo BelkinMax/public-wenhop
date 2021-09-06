@@ -103,7 +103,7 @@
     </v-main>
 
     <!--s-- Cookies popup -->
-    <v-snackbar v-model="!cookie.wasShown" :timeout="cookie.timeout" light>
+    <v-snackbar v-model="cookie.wasShown" :timeout="cookie.timeout" light>
       <template v-slot:action="{ attrs }">
         {{ cookie.message }}
         <v-btn color="blue" text v-bind="attrs" @click="disableCookieMsg()">
@@ -140,18 +140,6 @@ export default {
           badge: false,
           title: "Calendar",
           to: "/calendar"
-        },
-        {
-          icon: "mdi-wikipedia",
-          badge: false,
-          title: "Wiki",
-          to: "/wiki"
-        },
-        {
-          icon: "mdi-information",
-          badge: false,
-          title: "About",
-          to: "/about"
         }
       ]
     };
